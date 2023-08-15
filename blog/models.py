@@ -9,9 +9,9 @@ class Blog(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    owner = models.ForeignKey(User, verbose_name='Owner', on_delete=models.CASCADE)
-    authors = models.ManyToManyField(User, verbose_name='Authors')
-    subscribers = models.ManyToManyField(User, verbose_name='Subscribers')
+    owner = models.ForeignKey(User, related_name='Owner', on_delete=models.CASCADE)
+    authors = models.ManyToManyField(User, related_name='Authors')
+    subscribers = models.ManyToManyField(User, related_name='Subscribers')
 
     def __str__(self):
         return self.title
@@ -32,14 +32,14 @@ class Post(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     is_published = models.BooleanField(default=True)
 
-    likes = models.ManyToManyField(User, verbose_name='Likers')
+    likes = models.ManyToManyField(User, related_name='Likers')
     views = models.PositiveIntegerField(default=0)
 
     # cat = models.ForeignKey('Category', on_delete=models.PROTECT, null=True)
-    author = models.ForeignKey(User, verbose_name='Author', on_delete=models.CASCADE)
+    author = models.ForeignKey(User, related_name='PostAuthor', on_delete=models.CASCADE)
     blog = models.ForeignKey(Blog, on_delete=models.CASCADE)
 
-    tags = models.ManyToManyField(Tag, verbose_name='Tags')
+    tags = models.ManyToManyField(Tag, related_name='Tags')
 
     def __str__(self):
         return self.title
@@ -47,7 +47,7 @@ class Post(models.Model):
 
 class Comment(models.Model):
     post = models.ForeignKey('Post', on_delete=models.CASCADE, null=False)
-    author = models.ForeignKey(User, verbose_name='Author', on_delete=models.CASCADE)
+    author = models.ForeignKey(User, related_name='CommentAuthor', on_delete=models.CASCADE)
 
     body = models.TextField(blank=False)
 

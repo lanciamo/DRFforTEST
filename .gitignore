@@ -1,5 +1,8 @@
 .idea/
 venv/
+db.sqlite3
 DRFforTEST/__pycache__/
 blog/__pycache__/
-db.sqlite3
+blog/migrations/__pycache__/
+blog/.DS_Store
+.DS_Store
