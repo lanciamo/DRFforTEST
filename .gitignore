@@ -1,0 +1,4 @@
+.idea/
+venv/
+DRFforTEST/__pycache__/
+db.sqlite3
