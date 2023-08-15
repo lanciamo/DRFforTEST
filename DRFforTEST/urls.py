@@ -17,6 +17,11 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
+from blog.models import *
+
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('api/v1/blog/', BlogAPIList.as_view()),
+    path('api/v1/blog/<int:pk>/', BlogAPIUpdate.as_view()),
+    path('api/v1/blogdelete/<int:pk>/', BlogAPIDestroy.as_view()),
 ]
