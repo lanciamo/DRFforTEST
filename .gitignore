@@ -1,4 +1,5 @@
 .idea/
 venv/
 DRFforTEST/__pycache__/
+blog/__pycache__/
 db.sqlite3

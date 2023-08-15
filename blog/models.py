@@ -10,10 +10,8 @@ class Blog(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     owner = models.ForeignKey(User, verbose_name='Owner', on_delete=models.CASCADE)
-    authors = models.ManyToManyField(User, verbose_name='Authors', on_delete=models.PROTECT)
-    subscribers = models.ManyToManyField(User, verbose_name='Subscribers', on_delete=models.PROTECT)
-
-    tags = models.ManyToManyField(Tag, verbose_name='Authors', on_delete=models.PROTECT)
+    authors = models.ManyToManyField(User, verbose_name='Authors')
+    subscribers = models.ManyToManyField(User, verbose_name='Subscribers')
 
     def __str__(self):
         return self.title
@@ -34,14 +32,14 @@ class Post(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     is_published = models.BooleanField(default=True)
 
-    likes = models.ManyToManyField(User, verbose_name='Likers', on_delete=models.PROTECT)
+    likes = models.ManyToManyField(User, verbose_name='Likers')
     views = models.PositiveIntegerField(default=0)
 
     # cat = models.ForeignKey('Category', on_delete=models.PROTECT, null=True)
     author = models.ForeignKey(User, verbose_name='Author', on_delete=models.CASCADE)
     blog = models.ForeignKey(Blog, on_delete=models.CASCADE)
 
-    tags = models.ManyToManyField(Tag)
+    tags = models.ManyToManyField(Tag, verbose_name='Tags')
 
     def __str__(self):
         return self.title
