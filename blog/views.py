@@ -34,17 +34,17 @@ class PostsOfBlogAPIList(generics.ListCreateAPIView):
     serializer_class = PostSerializer
     permission_classes = (IsAuthenticatedOrReadOnly,)
 
-    def get_queryset(self, id):
+    def get_queryset(self):
         return Post.objects.filter(
-            blog=Blog.objects.get(id=id),
+            blog=Blog.objects.filter(id=self.request.parser_context.get('kwargs', {}).get('id')).first(),
             is_published=True
-        ).select_related('likes').annotate(
-            Count('likes', distinct=True)
-        )
+            ).prefetch_related('likes').annotate(
+                Count('likes', distinct=True)
+            )
 
     def list(self, request, *args, **kwargs):
         header = request.GET.get('header')
-        posts = self.get_queryset(kwargs.get('id'))
+        posts = self.get_queryset()
         print(kwargs)
 
-        return Response(status=200, data=self.serializer_class(PostSerializer, many=True).data)
+        return Response(status=200, data=self.serializer_class(posts, many=True).data)

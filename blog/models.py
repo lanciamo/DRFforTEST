@@ -32,7 +32,7 @@ class Post(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     is_published = models.BooleanField(default=True)
 
-    likes = models.ManyToManyField(User, related_name='Likers')
+    likes = models.ManyToManyField(User, related_name='likes')
     views = models.PositiveIntegerField(default=0)
 
     # cat = models.ForeignKey('Category', on_delete=models.PROTECT, null=True)
