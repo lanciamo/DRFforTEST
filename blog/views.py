@@ -36,11 +36,12 @@ class PostsOfBlogAPIList(generics.ListCreateAPIView):
 
     def get_queryset(self):
         return Post.objects.filter(
-            blog=Blog.objects.filter(id=self.request.parser_context.get('kwargs', {}).get('id')).first(),
-            is_published=True
-            ).prefetch_related('likes').annotate(
-                Count('likes', distinct=True)
-            )
+                    blog=Blog.objects.filter(
+                                id=self.request.parser_context.get('kwargs', {}).get('id')
+                                                ).first(),
+                    is_published=True
+                                ).prefetch_related('likes').annotate(
+                                                    Count('likes', distinct=True))
 
     def list(self, request, *args, **kwargs):
         header = request.GET.get('header')
