@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User
 from django.db import models
 
+
 # Create your models here.
 class Blog(models.Model):
     title = models.CharField(max_length=255)
@@ -55,4 +56,3 @@ class Comment(models.Model):
 
     def __str__(self):
         return (self.author, self.post)
-

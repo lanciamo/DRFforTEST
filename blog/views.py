@@ -6,7 +6,7 @@ from rest_framework.response import Response
 
 from .models import Blog, Post
 from .serializers import BlogSerializer, PostSerializer
-from .permissions import IsAdminOrReadOny, IsOwnerOrReadOnly
+from .permissions import IsAdminOrReadOny, IsOwnerOrReadOnly, IsAuthorOrReadOnly
 
 
 # Create your views here.
@@ -49,3 +49,21 @@ class PostsOfBlogAPIList(generics.ListCreateAPIView):
         print(kwargs)
 
         return Response(status=200, data=self.serializer_class(posts, many=True).data)
+
+
+class PostAPIRead(generics.ListCreateAPIView):
+    queryset = Post.objects.all()
+    serializer_class = PostSerializer
+    permission_classes = (IsAuthenticatedOrReadOnly,)
+
+
+class PostAPIUpdate(generics.RetrieveUpdateAPIView):
+    queryset = Post.objects.all()
+    serializer_class = PostSerializer
+    permission_classes = (IsAuthorOrReadOnly,)
+
+
+class PostAPIDestroy(generics.RetrieveDestroyAPIView):
+    queryset = Post.objects.all()
+    serializer_class = PostSerializer
+    permission_classes = (IsAdminOrReadOny,)
