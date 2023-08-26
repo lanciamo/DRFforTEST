@@ -1,6 +1,6 @@
 from django.db.models import Count
 from django.shortcuts import render
-from rest_framework import generics
+from rest_framework import generics, mixins
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 
@@ -51,7 +51,7 @@ class PostsOfBlogAPIList(generics.ListCreateAPIView):
         return Response(status=200, data=self.serializer_class(posts, many=True).data)
 
 
-class PostAPIRead(generics.ListCreateAPIView):
+class PostAPICreate(generics.ListCreateAPIView):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
     permission_classes = (IsAuthenticatedOrReadOnly,)
