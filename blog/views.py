@@ -1,7 +1,7 @@
 from django.db.models import Count
 from django.shortcuts import render
 from rest_framework import generics, mixins
-from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
 from rest_framework.response import Response
 
 from .models import Blog, Post
@@ -32,7 +32,8 @@ class BlogAPIDestroy(generics.RetrieveDestroyAPIView):
 
 class PostsOfBlogAPIList(generics.ListCreateAPIView):
     serializer_class = PostSerializer
-    permission_classes = (IsAuthenticatedOrReadOnly,)
+    permission_classes = (IsAuthenticated,)
+    # permission_classes = (IsAuthenticatedOrReadOnly,)
 
     def get_queryset(self):
         return Post.objects.filter(

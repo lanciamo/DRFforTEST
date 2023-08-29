@@ -1,4 +1,4 @@
-from django.urls import path, include
+from django.urls import path, include, re_path
 from .views import *
 
 
@@ -9,4 +9,6 @@ urlpatterns = [
     path('post_create/', PostAPICreate.as_view()), # we need to make view to create!!!
     path('post_update/<int:pk>/', PostAPIUpdate.as_view()), # read and update post
     path('post_delete/<int:pk>/', PostAPIDestroy.as_view()), # read and delete
+    path('auth/', include('djoser.urls')),  # https://djoser.readthedocs.io/en/latest/base_endpoints.html
+    re_path(r'^auth/', include('djoser.urls.authtoken')),
     ]
