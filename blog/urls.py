@@ -1,4 +1,6 @@
 from django.urls import path, include, re_path
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView, TokenVerifyView
+
 from .views import *
 
 
@@ -11,4 +13,7 @@ urlpatterns = [
     path('post_delete/<int:pk>/', PostAPIDestroy.as_view()), # read and delete
     path('auth/', include('djoser.urls')),  # https://djoser.readthedocs.io/en/latest/base_endpoints.html
     re_path(r'^auth/', include('djoser.urls.authtoken')),
+    path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('token/verify/', TokenVerifyView.as_view(), name='token_verify'),
     ]
