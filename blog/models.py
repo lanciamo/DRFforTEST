@@ -49,7 +49,7 @@ class Post(models.Model):
 class Comment(models.Model):
     post = models.ForeignKey('Post', on_delete=models.CASCADE, null=False)
     author = models.ForeignKey(User, related_name='CommentAuthor', on_delete=models.CASCADE)
-
+    #  как добавить ссылку на другую запись этой же модели Comment?
     body = models.TextField(blank=False)
 
     created_at = models.DateTimeField(auto_now_add=True)
