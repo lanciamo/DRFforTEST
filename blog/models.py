@@ -47,9 +47,12 @@ class Post(models.Model):
 
 
 class Comment(models.Model):
-    post = models.ForeignKey('Post', on_delete=models.CASCADE, null=False)
-    author = models.ForeignKey(User, related_name='CommentAuthor', on_delete=models.CASCADE)
-    #  как добавить ссылку на другую запись этой же модели Comment?
+    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='CommentAuthor')
+    # у меня есть два поля post and parent, that can be Null, but couldn't be Null одновременно
+    post = models.ForeignKey('Post', on_delete=models.CASCADE, null=True)
+    # грубо говоря post, это особый вид поля parent
+    #  как добавить ссылку на другую запись этой же модели Comment? а вот так:
+    parent = models.ForeignKey('Comment', on_delete=models.CASCADE, null=True, related_name='childs')
     body = models.TextField(blank=False)
 
     created_at = models.DateTimeField(auto_now_add=True)

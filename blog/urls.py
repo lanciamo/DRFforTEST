@@ -30,8 +30,9 @@ urlpatterns = [
     path('tag_delete/<int:id>/', PostsOfBlogAPIList.as_view()),  # delete tag
 
     # comments
-    path('post/<int:id>/comments/', PostsOfBlogAPIList.as_view()),  # !!! list of comments to post
-    # create global
+    path('post/<int:id>/comments/', CommentsListView.as_view()),  # !!! list of comments to post w/o parents
+    path('comments/<int:pk>/tree/', CommentsTreeView.as_view()),  # !!! recursively list of comments to the comment
+    # create comment on that entity, that I stay: or the Post, or the Comment
     # update global
     # delete global
 ]

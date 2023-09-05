@@ -1,12 +1,11 @@
 from django.db.models import Count
-from django.shortcuts import render
-from rest_framework import generics, mixins
+from rest_framework import generics
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
 from rest_framework.response import Response
 
-from .models import Blog, Post
-from .serializers import BlogSerializer, PostSerializer
-from .permissions import IsAdminOrReadOny, IsOwnerOrReadOnly, IsAuthorOrReadOnly
+from .models import *
+from .serializers import *
+from .permissions import *
 
 
 # Create your views here.
@@ -68,3 +67,29 @@ class PostAPIDestroy(generics.RetrieveDestroyAPIView):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
     permission_classes = (IsAdminOrReadOny,)
+
+
+class CommentsListView(generics.ListCreateAPIView):
+    serializer_class = BaseCommentSerializer
+    permission_classes = (IsAuthenticatedOrReadOnly,)
+
+    def get_queryset(self):
+        return Comment.objects.filter(id=1)
+        #     post=Post.objects.filter(
+        #         id=self.request.parser_context.get('kwargs', {}).get('id')
+        #     ).first(),
+        #     parent__isnull=True
+        # )
+
+    def list(self, request, *args, **kwargs):
+        # header = request.GET.get('header')
+        comments = self.get_queryset()
+        print('Comment', kwargs)
+
+        return Response(status=200, data=self.serializer_class(comments, many=True).data)
+
+
+class CommentsTreeView(generics.RetrieveUpdateAPIView):
+    queryset = Comment.objects.all()
+    serializer_class = RecursiveCommentSerializer
+    permission_classes = (IsAuthenticatedOrReadOnly,)
