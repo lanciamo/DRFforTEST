@@ -3,7 +3,7 @@ from .models import *
 
 
 class BlogSerializer(serializers.ModelSerializer):
-    owner = serializers.HiddenField(default=serializers.CurrentUserDefault())
+    # owner = serializers.HiddenField(default=serializers.CurrentUserDefault())
 
     class Meta:
         model = Blog
@@ -39,3 +39,12 @@ class RecursiveCommentSerializer(serializers.ModelSerializer):
     def get_childs(self, obj):  # почему она предлагает сделать метод статик?
         childs = obj.childs
         return RecursiveCommentSerializer(childs, many=True).data
+
+
+class CommentSerializer(serializers.ModelSerializer):
+    author = serializers.HiddenField(default=serializers.CurrentUserDefault())
+
+    class Meta:
+        model = Blog
+        fields = '__all__'
+

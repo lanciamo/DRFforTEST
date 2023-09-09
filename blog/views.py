@@ -3,7 +3,7 @@ from rest_framework import generics
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
 from rest_framework.response import Response
 
-from .models import *
+from .models import Blog, Post, Comment
 from .serializers import *
 from .permissions import *
 
@@ -32,6 +32,7 @@ class BlogAPIDestroy(generics.RetrieveDestroyAPIView):
 class PostsOfBlogAPIList(generics.ListCreateAPIView):
     serializer_class = PostSerializer
     permission_classes = (IsAuthenticated,)
+
     # permission_classes = (IsAuthenticatedOrReadOnly,)
 
     def get_queryset(self):
@@ -69,17 +70,59 @@ class PostAPIDestroy(generics.RetrieveDestroyAPIView):
     permission_classes = (IsAdminOrReadOny,)
 
 
+class CountLikesOfPost(generics.RetrieveAPIView):
+    queryset = Post.objects.all()
+    serializer_class = PostSerializer
+    permission_classes = (IsAuthenticatedOrReadOnly,)
+
+
+class LikeAPIAdd(generics.RetrieveUpdateAPIView):
+    queryset = Post.objects.all()
+    serializer_class = PostSerializer
+    permission_classes = (IsAuthenticatedOrReadOnly,)
+
+
+class LikeAPIRemove(generics.RetrieveUpdateAPIView):
+    queryset = Post.objects.all()
+    serializer_class = PostSerializer
+    permission_classes = (IsAuthenticatedOrReadOnly,)
+
+
+class TagsOfPostAPIList(generics.RetrieveDestroyAPIView):
+    pass
+
+
+class TagToPostAPICreate(generics.RetrieveDestroyAPIView):
+    pass
+
+
+class TagToPostAPIAdd(generics.RetrieveDestroyAPIView):
+    pass
+
+
+class TagsAPIList(generics.ListCreateAPIView):
+    pass
+
+
+class TagAPIUpdate(generics.RetrieveDestroyAPIView):
+    pass
+
+
+class TagAPIDelete(generics.RetrieveDestroyAPIView):
+    pass
+
+
 class CommentsListView(generics.ListCreateAPIView):
     serializer_class = BaseCommentSerializer
     permission_classes = (IsAuthenticatedOrReadOnly,)
 
     def get_queryset(self):
-        return Comment.objects.filter(id=1)
-        #     post=Post.objects.filter(
-        #         id=self.request.parser_context.get('kwargs', {}).get('id')
-        #     ).first(),
-        #     parent__isnull=True
-        # )
+        return Comment.objects.filter(
+            post=Post.objects.filter(
+                id=self.request.parser_context.get('kwargs', {}).get('id')
+            ).first(),
+            parent__isnull=True
+        )
 
     def list(self, request, *args, **kwargs):
         # header = request.GET.get('header')
@@ -93,3 +136,27 @@ class CommentsTreeView(generics.RetrieveUpdateAPIView):
     queryset = Comment.objects.all()
     serializer_class = RecursiveCommentSerializer
     permission_classes = (IsAuthenticatedOrReadOnly,)
+
+
+class CommentPostCreate(generics.ListCreateAPIView):
+    queryset = Comment.objects.all()  # id=self.request.parser_context.get('kwargs', {}).get('id')
+    serializer_class = CommentSerializer
+    permission_classes = (IsAuthenticatedOrReadOnly,)
+
+
+class CommentCommentCreate(generics.ListCreateAPIView):
+    queryset = Comment.objects.all()  # id=self.request.parser_context.get('kwargs', {}).get('id')
+    serializer_class = CommentSerializer
+    permission_classes = (IsAuthenticated,)
+
+
+class CommentAPIUpdate(generics.RetrieveUpdateAPIView):
+    queryset = Comment.objects.all()
+    serializer_class = CommentSerializer
+    permission_classes = (IsAuthorOrReadOnly,)
+
+
+class CommentAPIDelete(generics.RetrieveDestroyAPIView):
+    queryset = Comment.objects.all()
+    serializer_class = CommentSerializer
+    permission_classes = (IsAuthorOrReadOnly,)
