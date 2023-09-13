@@ -1,5 +1,5 @@
 from django.db.models import Count
-from rest_framework import generics
+from rest_framework import generics, mixins
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
 from rest_framework.response import Response
 
@@ -11,22 +11,16 @@ from .permissions import *
 # Create your views here.
 
 
-class BlogAPIList(generics.ListCreateAPIView):
+class BlogsAPIListCreate(generics.ListCreateAPIView):
     queryset = Blog.objects.all()
     serializer_class = BlogSerializer
     permission_classes = (IsAuthenticatedOrReadOnly,)
 
 
-class BlogAPIUpdate(generics.RetrieveUpdateAPIView):
+class BlogAPIRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
     queryset = Blog.objects.all()
     serializer_class = BlogSerializer
     permission_classes = (IsOwnerOrReadOnly,)
-
-
-class BlogAPIDestroy(generics.RetrieveDestroyAPIView):
-    queryset = Blog.objects.all()
-    serializer_class = BlogSerializer
-    permission_classes = (IsAdminOrReadOny,)
 
 
 class PostsOfBlogAPIList(generics.ListCreateAPIView):
@@ -52,64 +46,54 @@ class PostsOfBlogAPIList(generics.ListCreateAPIView):
         return Response(status=200, data=self.serializer_class(posts, many=True).data)
 
 
-class PostAPICreate(generics.ListCreateAPIView):
+class PostsAPIListCreate(generics.ListCreateAPIView):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
     permission_classes = (IsAuthenticatedOrReadOnly,)
 
 
-class PostAPIUpdate(generics.RetrieveUpdateAPIView):
+class PostAPIRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
     permission_classes = (IsAuthorOrReadOnly,)
 
 
-class PostAPIDestroy(generics.RetrieveDestroyAPIView):
-    queryset = Post.objects.all()
-    serializer_class = PostSerializer
-    permission_classes = (IsAdminOrReadOny,)
-
-
-class CountLikesOfPost(generics.RetrieveAPIView):
-    queryset = Post.objects.all()
+class PostLikesViewSet(mixins.CreateModelMixin,
+                       mixins.DestroyModelMixin,
+                       generics.GenericAPIView):
     serializer_class = PostSerializer
     permission_classes = (IsAuthenticatedOrReadOnly,)
 
+    def post(self, request, *args, **kwargs):
+        post = Post.objects.filter(id=kwargs.get('id')).first()
+        post.likes.add(request.user)
+        post.likes.save()
 
-class LikeAPIAdd(generics.RetrieveUpdateAPIView):
-    queryset = Post.objects.all()
+    def delete(self, request, *args, **kwargs):
+        post = Post.objects.filter(id=kwargs.get('id')).first()
+        post.likes.remove(request.user)
+        post.likes.save()
+
+
+class PostTagsView(mixins.CreateModelMixin,
+                   mixins.UpdateModelMixin,
+                   generics.GenericAPIView):
     serializer_class = PostSerializer
-    permission_classes = (IsAuthenticatedOrReadOnly,)
+
+    def post(self, request, *args, **kwargs):
+        post = Post.objects.filter(id=kwargs.get('id')).first()
+        post.tags = Tags.objects.filter(id__in=request.POST.get('ids'))
+        post.tags.save()
 
 
-class LikeAPIRemove(generics.RetrieveUpdateAPIView):
-    queryset = Post.objects.all()
-    serializer_class = PostSerializer
-    permission_classes = (IsAuthenticatedOrReadOnly,)
+class TagsAPIListCreate(generics.ListCreateAPIView):
+    queryset = Tag.objects.all()
+    serializer_class = TagSerializer
 
 
-class TagsOfPostAPIList(generics.RetrieveDestroyAPIView):
-    pass
-
-
-class TagToPostAPICreate(generics.RetrieveDestroyAPIView):
-    pass
-
-
-class TagToPostAPIAdd(generics.RetrieveDestroyAPIView):
-    pass
-
-
-class TagsAPIList(generics.ListCreateAPIView):
-    pass
-
-
-class TagAPIUpdate(generics.RetrieveDestroyAPIView):
-    pass
-
-
-class TagAPIDelete(generics.RetrieveDestroyAPIView):
-    pass
+class TagAPIRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Tag.objects.all()
+    serializer_class = TagSerializer
 
 
 class CommentsListView(generics.ListCreateAPIView):
@@ -138,25 +122,13 @@ class CommentsTreeView(generics.RetrieveUpdateAPIView):
     permission_classes = (IsAuthenticatedOrReadOnly,)
 
 
-class CommentPostCreate(generics.ListCreateAPIView):
-    queryset = Comment.objects.all()  # id=self.request.parser_context.get('kwargs', {}).get('id')
+class CommentsAPIListCreate(generics.ListCreateAPIView):
+    queryset = Comment.objects.all()
     serializer_class = CommentSerializer
     permission_classes = (IsAuthenticatedOrReadOnly,)
 
 
-class CommentCommentCreate(generics.ListCreateAPIView):
-    queryset = Comment.objects.all()  # id=self.request.parser_context.get('kwargs', {}).get('id')
-    serializer_class = CommentSerializer
-    permission_classes = (IsAuthenticated,)
-
-
-class CommentAPIUpdate(generics.RetrieveUpdateAPIView):
-    queryset = Comment.objects.all()
-    serializer_class = CommentSerializer
-    permission_classes = (IsAuthorOrReadOnly,)
-
-
-class CommentAPIDelete(generics.RetrieveDestroyAPIView):
+class CommentAPIRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
     permission_classes = (IsAuthorOrReadOnly,)

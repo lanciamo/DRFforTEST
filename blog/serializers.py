@@ -3,7 +3,6 @@ from .models import *
 
 
 class BlogSerializer(serializers.ModelSerializer):
-    # owner = serializers.HiddenField(default=serializers.CurrentUserDefault())
 
     class Meta:
         model = Blog
@@ -11,10 +10,16 @@ class BlogSerializer(serializers.ModelSerializer):
 
 
 class PostSerializer(serializers.ModelSerializer):
-    author = serializers.HiddenField(default=serializers.CurrentUserDefault())
 
     class Meta:
         model = Post
+        fields = '__all__'
+
+
+class TagSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Tag
         fields = '__all__'
 
 
@@ -42,9 +47,8 @@ class RecursiveCommentSerializer(serializers.ModelSerializer):
 
 
 class CommentSerializer(serializers.ModelSerializer):
-    author = serializers.HiddenField(default=serializers.CurrentUserDefault())
 
     class Meta:
-        model = Blog
+        model = Comment
         fields = '__all__'
 
