@@ -7,8 +7,9 @@ from .models import Blog, Post, Comment
 from .serializers import *
 from .permissions import *
 
+from rest_framework_swagger.views import get_swagger_view
 
-# Create your views here.
+schema_view = get_swagger_view(title='Pastebin API')
 
 
 class BlogsAPIListCreate(generics.ListCreateAPIView):
@@ -27,8 +28,6 @@ class PostsOfBlogAPIList(generics.ListCreateAPIView):
     serializer_class = PostSerializer
     permission_classes = (IsAuthenticated,)
 
-    # permission_classes = (IsAuthenticatedOrReadOnly,)
-
     def get_queryset(self):
         return Post.objects.filter(
             blog=Blog.objects.filter(
@@ -39,7 +38,6 @@ class PostsOfBlogAPIList(generics.ListCreateAPIView):
             Count('likes', distinct=True))
 
     def list(self, request, *args, **kwargs):
-        # header = request.GET.get('header')
         posts = self.get_queryset()
         print(kwargs)
 
@@ -109,7 +107,6 @@ class CommentsListView(generics.ListCreateAPIView):
         )
 
     def list(self, request, *args, **kwargs):
-        # header = request.GET.get('header')
         comments = self.get_queryset()
         print('Comment', kwargs)
 
