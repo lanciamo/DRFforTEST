@@ -7,6 +7,5 @@ blog/migrations/__pycache__/
 blog/.DS_Store
 .DS_Store
 _last_answer.md
-.env
 postgres-data/
 .gitignore.swp
