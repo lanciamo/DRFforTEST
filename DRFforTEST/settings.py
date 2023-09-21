@@ -84,7 +84,7 @@ WSGI_APPLICATION = 'DRFforTEST.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-DATABASE_URL = os.getenv('DATABASE_URL')  # , default="postgres://postgres:postgres@localhost:5432/postgres")
+DATABASE_URL = os.getenv('DATABASE_URL')
 
 DATABASES = {
     'default': dj_database_url.config(default=DATABASE_URL)
